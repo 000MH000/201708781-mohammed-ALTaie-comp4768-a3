@@ -51,11 +51,18 @@ class ExpenseNotifier extends ChangeNotifier {
     notifyListeners(); // Notify listeners
   }
 
-  // You can add more computed properties here, e.g., total spending, spending by category
+  // Get expenses sorted by date for line chart
+  List<Expense> get sortedExpensesByDate {
+    final sortedList = List<Expense>.from(_expenses);
+    sortedList.sort((a, b) => a.date.compareTo(b.date));
+    return sortedList;
+  }
+
+  // Computed value for total spending
   double getTotalSpending() {
     return _expenses.fold(0.0, (sum, item) => sum + item.amount);
   }
-
+  // Computed value for spending by category (for Bar and Pie charts)
   Map<String, double> getSpendingByCategory() {
     final Map<String, double> categoryTotals = {};
     for (var expense in _expenses) {
@@ -66,5 +73,20 @@ class ExpenseNotifier extends ChangeNotifier {
       );
     }
     return categoryTotals;
+  }
+
+  // Method to get daily spending for Line Chart
+  Map<DateTime, double> getDailySpending() {
+    final Map<DateTime, double> dailyTotals = {};
+    for (var expense in _expenses) {
+      // Normalize date to just year, month, day for grouping
+      final dateOnly = DateTime(expense.date.year, expense.date.month, expense.date.day);
+      dailyTotals.update(
+        dateOnly,
+            (value) => value + expense.amount,
+        ifAbsent: () => expense.amount,
+      );
+    }
+    return dailyTotals;
   }
 }
