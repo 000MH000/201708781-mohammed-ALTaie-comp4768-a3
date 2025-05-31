@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart'; // Required for Hive init
-import 'services/hive_service.dart'; // Import your HiveService
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
+import 'services/hive_service.dart';
+import 'routing/app_router.dart'; // Import your AppRouter
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
+  WidgetsFlutterBinding.ensureInitialized();
   await _initHive(); // Initialize Hive before running the app
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope( // Wrap your app with ProviderScope for Riverpod
+      child: MyApp(),
+    ),
+  );
 }
 
 Future<void> _initHive() async {
   final appDocumentDir = await getApplicationDocumentsDirectory();
-  Hive.init(appDocumentDir.path); // Initialize Hive with a storage path
-  // No need to register adapter here if HiveService.init() handles it.
-  // We'll call HiveService().init() later which will register the adapter.
+  Hive.init(appDocumentDir.path);
+  // Initialize HiveService here and open the box
+  await HiveService().init(); // Call the init method of your HiveService
 }
 
 class MyApp extends StatelessWidget {
@@ -21,19 +27,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router( // Use MaterialApp.router for GoRouter
       title: 'Expense Tracker',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Expense Tracker'),
-        ),
-        body: Center(
-          child: Text('Welcome to Expense Tracker!'),
-        ),
-      ),
+      routerConfig: AppRouter.router, // Pass your GoRouter instance here
     );
   }
 }
