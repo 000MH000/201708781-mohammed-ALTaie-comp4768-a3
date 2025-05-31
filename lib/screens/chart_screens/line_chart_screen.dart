@@ -60,16 +60,13 @@ class LineChartScreen extends ConsumerWidget {
                 sideTitles: SideTitles(
                   showTitles: true,
                   reservedSize: 30,
-                  interval: (maxX - minX) / 3, // Roughly 4 labels, adjust as needed
-                  getTitlesWidget: (double value, TitleMeta meta) { // <-- Explicitly specify types and use TitleMeta
+                  interval: (maxX - minX) / 3,
+                  getTitlesWidget: (double value, TitleMeta meta) { // <-- STILL TitleMeta is required
                     final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                    return SideTitleWidget(
-                      axisSide: meta.axisSide, // <-- Use meta.axisSide
-                      space: 8.0,
-                      child: Text(
-                        DateFormat.Md().format(date),
-                        style: const TextStyle(fontSize: 10),
-                      ),
+                    // DIRECTLY RETURN TEXT, AVOID SideTitleWidget
+                    return Text(
+                      DateFormat.Md().format(date),
+                      style: const TextStyle(fontSize: 10),
                     );
                   },
                 ),
@@ -77,7 +74,7 @@ class LineChartScreen extends ConsumerWidget {
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  getTitlesWidget: (double value, TitleMeta meta) { // <-- Explicitly specify types and use TitleMeta
+                  getTitlesWidget: (double value, TitleMeta meta) { // <-- STILL TitleMeta is required
                     return Text('\$${value.toStringAsFixed(0)}');
                   },
                   reservedSize: 40,
@@ -119,8 +116,6 @@ class LineChartScreen extends ConsumerWidget {
             ],
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
-                // In fl_chart ^1.0.0, tooltipBgColor is gone from here.
-                // You would typically use `tooltipResolver` or set `tooltipStyle` on `LineTooltipItem`
                 getTooltipItems: (List<LineBarSpot> touchedSpots) {
                   return touchedSpots.map((LineBarSpot touchedSpot) {
                     final FlSpot spot = touchedSpot;
@@ -138,7 +133,6 @@ class LineChartScreen extends ConsumerWidget {
                           ),
                         ),
                       ],
-                      // tooltipStyle: const TooltipStyle(backgroundColor: Colors.blueGrey),
                     );
                   }).toList();
                 },
