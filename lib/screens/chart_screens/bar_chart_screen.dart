@@ -25,7 +25,6 @@ class BarChartScreen extends ConsumerWidget {
       );
     }
 
-
     final Map<String, int> categoryIndexes = {
       for (var i = 0; i < categories.length; i++) categories[i]: i
     };
@@ -69,19 +68,16 @@ class BarChartScreen extends ConsumerWidget {
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  getTitlesWidget: (double value, TitleMeta meta) { // <-- Explicitly specify types and use TitleMeta
+                  getTitlesWidget: (double value, TitleMeta meta) { // <-- STILL TitleMeta is required
                     if (value.toInt() < 0 || value.toInt() >= categories.length) {
                       return const Text('');
                     }
-                    return SideTitleWidget(
-                      axisSide: meta.axisSide, // <-- Use meta.axisSide
-                      space: 8.0,
-                      child: Text(
-                        categories[value.toInt()],
-                        style: const TextStyle(
-                            color: Colors.black, fontSize: 10),
-                        textAlign: TextAlign.center,
-                      ),
+                    // DIRECTLY RETURN TEXT, AVOID SideTitleWidget
+                    return Text(
+                      categories[value.toInt()],
+                      style: const TextStyle(
+                          color: Colors.black, fontSize: 10),
+                      textAlign: TextAlign.center,
                     );
                   },
                   interval: 1,
@@ -91,7 +87,7 @@ class BarChartScreen extends ConsumerWidget {
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  getTitlesWidget: (double value, TitleMeta meta) { // <-- Explicitly specify types and use TitleMeta
+                  getTitlesWidget: (double value, TitleMeta meta) { // <-- STILL TitleMeta is required
                     return Text('\$${value.toStringAsFixed(0)}');
                   },
                   reservedSize: 40,
