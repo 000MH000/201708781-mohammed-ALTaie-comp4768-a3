@@ -1,63 +1,61 @@
+// lib/routing/app_router.dart
 import 'package:go_router/go_router.dart';
-import 'package:flutter/material.dart'; // Needed for MaterialPage
+import 'package:flutter/material.dart';
 
-// Import placeholder screens for now. We'll create these files later.
+// Import all your screens
 import '../screens/list_screen.dart';
 import '../screens/add_edit_screen.dart';
 import '../screens/chart_screens/bar_chart_screen.dart';
 import '../screens/chart_screens/line_chart_screen.dart';
 import '../screens/chart_screens/pie_chart_screen.dart';
+import '../screens/chart_screens/chart_selection_screen.dart'; // <--- NEW IMPORT
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
-  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
+  // static final _shellNavigatorKey = GlobalKey<NavigatorState>(); // Not strictly needed for this setup
 
   static final GoRouter router = GoRouter(
-    initialLocation: '/list', // Set the initial route for the app
+    initialLocation: '/list',
     navigatorKey: _rootNavigatorKey,
     routes: [
-      // Main screen (list of expenses)
       GoRoute(
         path: '/',
-        redirect: (_, __) => '/list', // Redirect root to list screen
+        redirect: (_, __) => '/list',
       ),
       GoRoute(
         path: '/list',
         builder: (context, state) => const ExpenseListScreen(),
       ),
-
-      // Add Expense screen
       GoRoute(
         path: '/add',
         builder: (context, state) => const AddEditExpenseScreen(),
       ),
-
-      // Edit Expense screen (takes an optional ID parameter)
       GoRoute(
-        path: '/edit/:id', // :id is a path parameter
+        path: '/edit/:id',
         builder: (context, state) {
           final String? expenseId = state.pathParameters['id'];
-          // For now, we'll pass null if ID isn't provided or not needed.
-          // We'll refine this when we implement the actual edit logic.
           return AddEditExpenseScreen(expenseId: expenseId);
         },
       ),
-
-      // Chart screens
+      // NEW ROUTE for Chart Selection Screen
       GoRoute(
-        path: '/charts/bar',
+        path: '/charts', // This will now go to the selection screen
+        builder: (context, state) => const ChartSelectionScreen(),
+      ),
+      // Individual chart routes remain children of charts for clear pathing if needed
+      GoRoute(
+        path: '/charts/bar', // Specific route for bar chart
         builder: (context, state) => const BarChartScreen(),
       ),
       GoRoute(
-        path: '/charts/line',
+        path: '/charts/line', // Specific route for line chart
         builder: (context, state) => const LineChartScreen(),
       ),
       GoRoute(
-        path: '/charts/pie',
+        path: '/charts/pie', // Specific route for pie chart
         builder: (context, state) => const PieChartScreen(),
       ),
     ],
-    // Optional: Error screen or redirect for unknown routes
     errorBuilder: (context, state) => Scaffold(
       appBar: AppBar(title: const Text('Error')),
       body: Center(

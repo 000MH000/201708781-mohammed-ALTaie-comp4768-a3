@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart'; // Make sure this is imported
 
 import '../../providers/expense_provider.dart';
 
@@ -18,7 +19,17 @@ class BarChartScreen extends ConsumerWidget {
 
     if (categories.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Spending by Category (Bar Chart)')),
+        appBar: AppBar(
+          title: const Text('Spending by Category (Bar Chart)'),
+          // --- ADD THIS LEADING BUTTON ---
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back), // Standard back arrow icon
+            onPressed: () {
+              // This navigates directly to the list screen,
+              // effectively clearing the chart screens from the navigation stack.
+              context.go('/list');
+            },
+          ),),
         body: const Center(
           child: Text('No expenses to display in the bar chart yet!'),
         ),
@@ -49,7 +60,17 @@ class BarChartScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Spending by Category (Bar Chart)'),
+        title: const Text('Spending by Category'),
+        // --- ADD THIS LEADING BUTTON ---
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // Standard back arrow icon
+          onPressed: () {
+            // This navigates directly to the list screen,
+            // effectively clearing the chart screens from the navigation stack.
+            context.go('/list');
+          },
+        ),
+        // ------------------------------
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

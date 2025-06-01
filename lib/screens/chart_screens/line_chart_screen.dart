@@ -1,7 +1,9 @@
+// lib/screens/chart_screens/line_chart_screen.dart
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart'; // Import GoRouter for navigation
 
 import '../../providers/expense_provider.dart';
 
@@ -15,7 +17,15 @@ class LineChartScreen extends ConsumerWidget {
 
     if (dailySpending.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Spending Over Time (Line Chart)')),
+        appBar: AppBar(
+          title: const Text('Spending Over Time (Line Chart)'),
+          leading: IconButton( // Added leading button for navigation
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              context.go('/list'); // Navigate directly to the main expense list
+            },
+          ),
+        ),
         body: const Center(
           child: Text('No expenses to display in the line chart yet!'),
         ),
@@ -45,6 +55,12 @@ class LineChartScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Spending Over Time (Line Chart)'),
+        leading: IconButton( // Added leading button for navigation
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/list'); // Navigate directly to the main expense list
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -61,9 +77,8 @@ class LineChartScreen extends ConsumerWidget {
                   showTitles: true,
                   reservedSize: 30,
                   interval: (maxX - minX) / 3,
-                  getTitlesWidget: (double value, TitleMeta meta) { // <-- STILL TitleMeta is required
+                  getTitlesWidget: (double value, TitleMeta meta) {
                     final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-                    // DIRECTLY RETURN TEXT, AVOID SideTitleWidget
                     return Text(
                       DateFormat.Md().format(date),
                       style: const TextStyle(fontSize: 10),
@@ -74,7 +89,7 @@ class LineChartScreen extends ConsumerWidget {
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  getTitlesWidget: (double value, TitleMeta meta) { // <-- STILL TitleMeta is required
+                  getTitlesWidget: (double value, TitleMeta meta) {
                     return Text('\$${value.toStringAsFixed(0)}');
                   },
                   reservedSize: 40,

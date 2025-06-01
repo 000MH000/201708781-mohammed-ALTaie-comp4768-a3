@@ -1,20 +1,20 @@
-import 'package:flutter/material.dart'; // Needed for ChangeNotifier
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // <--- ADD THIS IMPORT
 import '../models/expense.dart';
-import '../services/hive_service.dart';
+// import '../services/hive_service.dart'; // This import is no longer strictly needed if HiveService is unused by Notifier
 
 // This is the provider that will expose our ExpenseNotifier
 final expenseProvider = ChangeNotifierProvider<ExpenseNotifier>((ref) {
-  // You can access other providers here if needed, e.g., ref.watch(someOtherProvider)
   return ExpenseNotifier();
 });
 
 // The ChangeNotifier class that manages the state of expenses
 class ExpenseNotifier extends ChangeNotifier {
-  final HiveService _hiveService = HiveService(); // Instantiate HiveService
-  List<Expense> _expenses = []; // Private list of expenses
+  // Removed explicit HiveService instance, accessing Hive.box directly
+  List<Expense> _expenses = [];
 
-  List<Expense> get expenses => _expenses; // Public getter for expenses
+  List<Expense> get expenses => _expenses;
 
   ExpenseNotifier() {
     _loadExpenses(); // Load expenses when the provider is initialized
@@ -22,33 +22,30 @@ class ExpenseNotifier extends ChangeNotifier {
 
   // Load expenses from Hive
   Future<void> _loadExpenses() async {
-    _expenses = _hiveService.getExpenses();
-    notifyListeners(); // Notify listeners (UI) that data has changed
+    final expenseBox = Hive.box<Expense>('expenses');
+    _expenses = expenseBox.values.toList();
+    notifyListeners();
   }
 
   // Add a new expense
   Future<void> addExpense(Expense expense) async {
-    await _hiveService.addExpense(expense);
-    _expenses.add(expense); // Add to local list
-    notifyListeners(); // Notify listeners
+    final expenseBox = Hive.box<Expense>('expenses');
+    await expenseBox.add(expense);
+    await _loadExpenses();
   }
 
   // Update an existing expense
   Future<void> updateExpense(Expense updatedExpense) async {
-    await _hiveService.updateExpense(updatedExpense);
-    // Find the index of the updated expense and replace it
-    final index = _expenses.indexWhere((e) => e.key == updatedExpense.key);
-    if (index != -1) {
-      _expenses[index] = updatedExpense;
-    }
-    notifyListeners(); // Notify listeners
+    // Hive's .save() method on a HiveObject instance is enough to update it
+    await updatedExpense.save();
+    await _loadExpenses();
   }
 
   // Delete an expense
   Future<void> deleteExpense(Expense expense) async {
-    await _hiveService.deleteExpense(expense);
-    _expenses.removeWhere((e) => e.key == expense.key); // Remove from local list
-    notifyListeners(); // Notify listeners
+    // Hive's .delete() method on a HiveObject instance is enough to delete it
+    await expense.delete();
+    await _loadExpenses();
   }
 
   // Get expenses sorted by date for line chart
