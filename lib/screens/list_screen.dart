@@ -21,12 +21,18 @@ class ExpenseListScreen extends ConsumerWidget {
         title: const Text('Expense List'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.show_chart),
+            icon: const Icon(Icons.show_chart), // You can keep this icon
             onPressed: () {
-              // TODO: Implement a way to navigate to charts (e.g., a chart selection screen or direct to bar chart for now)
-              context.go('/charts/bar'); // Example: Navigate to bar chart
+              context.go('/charts'); // <--- NAVIGATE TO CHART SELECTION SCREEN
             },
           ),
+          // You might also add an add button here if you want it in the app bar
+          // IconButton(
+          //   icon: const Icon(Icons.add),
+          //   onPressed: () {
+          //     context.go('/add');
+          //   },
+          // ),
         ],
       ),
       body: expenses.isEmpty
@@ -96,7 +102,7 @@ class ExpenseListScreen extends ConsumerWidget {
                           // Navigate to edit screen with expense ID (Hive key)
                           // GoRouter uses key directly for HiveObject
                           if (expense.key != null) {
-                            context.go('/edit/${expense.key}');
+                            context.push('/edit/${expense.key}'); // <--- Change to push
                           } else {
                             // Handle case where expense doesn't have a key yet (shouldn't happen for saved expenses)
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -120,9 +126,9 @@ class ExpenseListScreen extends ConsumerWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton( // Assuming you want an add button here
         onPressed: () {
-          context.go('/add'); // Navigate to the add expense screen
+          context.push('/add'); // <--- Change to push
         },
         child: const Icon(Icons.add),
       ),

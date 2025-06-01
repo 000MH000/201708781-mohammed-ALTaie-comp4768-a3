@@ -128,7 +128,9 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
           const SnackBar(content: Text('Expense updated successfully!')),
         );
       }
-      context.go('/list'); // Navigate back to the list screen
+      // context.go('/list');
+      context.pop(); // <--- Change this to go back to the previous screen
+                       // (which should be the list screen if you pushed to add/edit)
     }
   }
 

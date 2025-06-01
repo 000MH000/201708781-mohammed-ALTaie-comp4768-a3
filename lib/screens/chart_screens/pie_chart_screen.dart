@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart'; // Import GoRouter for navigation
 
 import '../../providers/expense_provider.dart';
 
@@ -27,7 +28,15 @@ class PieChartScreen extends ConsumerWidget {
 
     if (categorySpending.isEmpty || totalSpending == 0) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Category Distribution (Pie Chart)')),
+        appBar: AppBar(
+          title: const Text('Category Distribution (Pie Chart)'),
+          leading: IconButton( // Added leading button for navigation
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              context.go('/list'); // Navigate directly to the main expense list
+            },
+          ),
+        ),
         body: const Center(
           child: Text('No expenses to display in the pie chart yet!'),
         ),
@@ -66,6 +75,12 @@ class PieChartScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Category Distribution (Pie Chart)'),
+        leading: IconButton( // Added leading button for navigation
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/list'); // Navigate directly to the main expense list
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
